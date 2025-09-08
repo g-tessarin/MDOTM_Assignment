@@ -1,5 +1,6 @@
 package com.gtessarin.MDOTM_Assignment.controller;
 
+import com.gtessarin.MDOTM_Assignment.exception.NoPetsFoundException;
 import com.gtessarin.MDOTM_Assignment.model.CreatePetRequest;
 import com.gtessarin.MDOTM_Assignment.model.PetDto;
 import com.gtessarin.MDOTM_Assignment.service.PetService;
@@ -30,7 +31,10 @@ public class PetController implements PetsApiDelegate {
     public ResponseEntity<PetDto> getPetById(Long id) {
         try {
             return ResponseEntity.of(petService.getPetById(id));
-        }catch (Exception e){
+        }catch (NoPetsFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+        catch (Exception e){
             return ResponseEntity.internalServerError().build();
         }
 
@@ -61,6 +65,8 @@ public class PetController implements PetsApiDelegate {
     public ResponseEntity<PetDto> updatePet(Long id, PetDto petDto) {
         try {
             return ResponseEntity.ofNullable(petService.updatePet(id, petDto));
+        }catch (NoPetsFoundException e){
+            return ResponseEntity.notFound().build();
         }catch (Exception e){
             return ResponseEntity.internalServerError().build();
         }

@@ -166,7 +166,6 @@
                         </goals>
                         <configuration>
                             <generatorName>spring</generatorName>
-
                             <inputSpec>
                                 ${project.basedir}/src/main/resources/pets-swagger.yaml
                             </inputSpec>

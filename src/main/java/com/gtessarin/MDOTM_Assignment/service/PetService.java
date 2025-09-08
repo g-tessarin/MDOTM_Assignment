@@ -1,6 +1,7 @@
 package com.gtessarin.MDOTM_Assignment.service;
 
 import com.gtessarin.MDOTM_Assignment.entity.PetEntity;
+import com.gtessarin.MDOTM_Assignment.exception.NoPetsFoundException;
 import com.gtessarin.MDOTM_Assignment.mapper.PetMapper;
 import com.gtessarin.MDOTM_Assignment.model.CreatePetRequest;
 import com.gtessarin.MDOTM_Assignment.model.PetDto;
@@ -22,12 +23,18 @@ public class PetService {
 
     @Transactional
     public Optional<PetDto> getPetById(Long id) {
-        return Optional.ofNullable(petMapper.entityToDto(repository.findById(id).orElse(null)));
+        return Optional.ofNullable(
+                petMapper.entityToDto(
+                        repository.findById(id).orElseThrow(NoPetsFoundException::new)
+                )
+        );
     }
 
     @Transactional
     public PetDto savePet(CreatePetRequest request) {
-        return petMapper.entityToDto(repository.save(petMapper.createRequestToEntity(request)));
+        return petMapper.entityToDto(
+                repository.save(petMapper.createRequestToEntity(request))
+        );
     }
 
     @Transactional
@@ -45,9 +52,9 @@ public class PetService {
 
     @Transactional
     public PetDto updatePet(Long id, PetDto petDto) {
-        PetEntity oldPet = repository.findById(id).orElseThrow();
+        PetEntity oldPet = repository.findById(id).orElseThrow(NoPetsFoundException::new);
         PetEntity newPet = petMapper.patchEntity(petDto, oldPet);
-       return petMapper.entityToDto( repository.save(newPet));
+        return petMapper.entityToDto(repository.save(newPet));
     }
 
 }
